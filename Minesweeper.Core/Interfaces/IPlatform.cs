@@ -2,7 +2,7 @@
 {
     public interface IPlatform
     {
-        void Move();
+        void NextMove();
 
         void MoveSuccessful(string chessPosition, int moveCount, int availableLives);
 
@@ -13,7 +13,6 @@
         void GameOver(string chessPosition);
 
         void InvalidMove();
-
 
     }
 }

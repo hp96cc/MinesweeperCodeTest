@@ -1,4 +1,6 @@
 ﻿using Minesweeper.Core.Interfaces;
+using Minesweeper.Core.Services;
+using System.Diagnostics;
 
 namespace Minesweeper.Core
 {
@@ -8,8 +10,7 @@ namespace Minesweeper.Core
         private Player Player;
         private IPlatform platform;
         private IMineService mineService;
-        string[] chessboardXPositionLabels = new string[8] { "A", "B", "C", "D", "E", "F", "G", "H"  };
-
+      
         private Game() { }
 
         public Game(IPlatform platform, IMineService mineService) {
@@ -18,7 +19,7 @@ namespace Minesweeper.Core
             CreateGame();
         }
 
-        public void CreateGame()
+        private void CreateGame()
         {
             Minefield = new Minefield(mineService);
             Player = new Player();   
@@ -35,6 +36,7 @@ namespace Minesweeper.Core
             var positionX = newPosition[0];
             var positionY = newPosition[1];
 
+          
             if (DoesMoveCompleteGame(positionY))
             {
                 Player.Move(positionX, positionY);
@@ -47,6 +49,8 @@ namespace Minesweeper.Core
             } 
             else
             {
+                Debug.WriteLine(string.Format("Move to {0}", ChessboardPostionTranslationHelper.GeTranslatedChessBoardPosition(positionX, positionY)));
+
 
                 Player.Move(positionX, positionY);
 
@@ -59,45 +63,37 @@ namespace Minesweeper.Core
                 {
                     ProcessSuccessfulMove(positionX, positionY);
                 }
-
             }
-
-
         }
 
         private void ProcessSuccessfulMove(int positionX, int positionY)
         {
-            platform.MoveSuccessful(GetTranslatedChessBoardPosition(positionX, positionY), Player.MoveCount, Player.AvailableLives);
-            platform.Move();
+            platform.MoveSuccessful(ChessboardPostionTranslationHelper.GeTranslatedChessBoardPosition(positionX, positionY), Player.MoveCount, Player.AvailableLives);
+            platform.NextMove();
         }
 
         private void ProcessMineHit(int positionX, int positionY)
         {
             if (Player.HasAvailableLives())
             {
-                platform.PlayerHitMine(GetTranslatedChessBoardPosition(positionX, positionY), Player.MoveCount, Player.AvailableLives);
-                platform.Move();
+                platform.PlayerHitMine(ChessboardPostionTranslationHelper.GeTranslatedChessBoardPosition(positionX, positionY), Player.MoveCount, Player.AvailableLives);
+                platform.NextMove();
             }
             else
             {
-                platform.GameOver(GetTranslatedChessBoardPosition(positionX, positionY));
+                platform.GameOver(ChessboardPostionTranslationHelper.GeTranslatedChessBoardPosition(positionX, positionY));
             }
         }
 
         private void ProcessInvalidMove()
         {
             platform.InvalidMove();
-            platform.Move();
+            platform.NextMove();
         }
 
         private void ProcessGameWin()
         {
             platform.GameWin(Player.MoveCount);
-        }
-
-        private string GetTranslatedChessBoardPosition(int positionX, int positionY)
-        {
-            return chessboardXPositionLabels[positionX] + (positionY + 1).ToString();
         }
 
         private int[] CaluclateNewPosition(int changedPositionX, int changedPositionY)

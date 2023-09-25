@@ -42,6 +42,7 @@ namespace Minesweeper.Tests
         {
             game.StartGame();
             platform.Verify(v => v.MoveSuccessful("A1", 1, 3));
+            platform.Verify(v => v.NextMove());
         }
 
         [Test]
@@ -50,6 +51,7 @@ namespace Minesweeper.Tests
             game.StartGame();
             game.Move(0, 1);
             platform.Verify(v => v.MoveSuccessful("A2", 2, 3));
+            platform.Verify(v => v.NextMove());
         }
 
 
@@ -60,19 +62,42 @@ namespace Minesweeper.Tests
             game.Move(0, 1);
             game.Move(1, 0);
             platform.Verify(v => v.PlayerHitMine("B2", 3, 2));
+            platform.Verify(v => v.NextMove());
         }
+
+        [Test]
+        public void After3HitMines_GameOver()
+        {
+            game.StartGame();
+            game.Move(1, 0);
+            game.Move(0, 1);
+            game.Move(0, 1);
+
+            platform.Verify(v => v.GameOver("B3"));
+        }
+
 
         [Test]
         public void After9Moves_PlayerWinsGame()
         {
             game.StartGame();
+            platform.Verify(v => v.NextMove());
 
-            for(int i=0; i < 8; i++)
+            for (int i = 0; i < 8; i++)
             {
                 game.Move(0, 1);
             }
 
             platform.Verify(v => v.GameWin(9));
+        }
+
+        [Test]
+        public void PlayerMovesOffBoard_InvalidMoveMessageShown()
+        {
+            game.StartGame();
+            game.Move(-1, 0);
+
+            platform.Verify(v => v.InvalidMove());
         }
 
     }

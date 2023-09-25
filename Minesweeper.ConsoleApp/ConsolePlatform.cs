@@ -1,5 +1,6 @@
 ﻿using Minesweeper.Core;
 using Minesweeper.Core.Interfaces;
+using Minesweeper.Core.Services;
 
 namespace Minesweeper.ConsoleApp
 {
@@ -18,7 +19,7 @@ namespace Minesweeper.ConsoleApp
             game.StartGame();
         }
 
-        public void Move()
+        public void NextMove()
         {
             Console.WriteLine("Make your next move");
 
@@ -32,6 +33,7 @@ namespace Minesweeper.ConsoleApp
             else
             {
                 DisplayInvalidKeyText();
+                NextMove();
             }
 
         }

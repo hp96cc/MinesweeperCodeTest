@@ -1,7 +1,8 @@
 ﻿using Minesweeper.Core.Interfaces;
+using System;
 using System.Diagnostics;
 
-namespace Minesweeper.Core
+namespace Minesweeper.Core.Services
 {
     public class MineService : IMineService
     {
@@ -22,13 +23,13 @@ namespace Minesweeper.Core
                 if (mineExists)
                 {
                     i--;
-                    Debug.WriteLine("Mine exists as position {0} {1}, trying again", randomX, randomY);
+                    Debug.WriteLine("Mine exists as position {0} {1} ({2}), trying again", randomX, randomY, ChessboardPostionTranslationHelper.GeTranslatedChessBoardPosition(randomX, randomY));
                     continue;
                 }
                 else
                 {
                     mines[i] = new int[2] { randomX, randomY };
-                    Debug.WriteLine("Mine at position {0} {1}", randomX, randomY);
+                    Debug.WriteLine("Mine at position {0} {1} ({2})", randomX, randomY, ChessboardPostionTranslationHelper.GeTranslatedChessBoardPosition(randomX, randomY));
                 }
             }
 
